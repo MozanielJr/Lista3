@@ -1,0 +1,2 @@
+1. Definição de estrutcs; Mozaniel ok!
+2. Definir funções e procedimentos; 

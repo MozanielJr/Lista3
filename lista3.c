@@ -16,3 +16,45 @@
 // os nomes dos integrantes e link do github).
 // - Para cada envio de outros integrantes no AVA será descontado 1 ponto do grupo.
 // - Entrega 3 – 05/06
+
+#include <stdio.h>
+
+#define MAX_FABRICANTES 5
+#define MAX_PRODUTOS 50
+
+int main(){
+
+
+struct Uf
+
+{
+    char estado[2];
+};
+
+struct Fabricante
+{
+    char marca[20];
+    char site[20];
+    char telefoneFixo[11];
+    char telefoneCelular[12];
+    struct Uf uf;
+
+};
+
+
+struct Produtos
+{
+    char descricao[100];
+    float peso;
+    float valorDeCompra;
+    float valorDeVenda;
+    float valorDoLucro;
+    float percentualDoLucro;
+    struct Fabricante fabricante[MAX_FABRICANTES];
+};
+
+
+
+
+
+}
