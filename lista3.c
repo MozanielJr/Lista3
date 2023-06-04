@@ -41,6 +41,10 @@ typedef struct {
     int fabricanteIndex;
 } Produto;
 
+typedef struct {
+    char estados[2];
+} UFs;
+
 // Função para ler e validar uma string
 void lerString(char* string, int tamanho) {
     fgets(string, tamanho, stdin);
@@ -87,7 +91,7 @@ void cadastrarFabricante(Fabricante* fabricante, int* numFabricantes) {
 }
 
 // Função para cadastrar um produto
-void cadastrarProduto(Produto* produto, Fabricante* fabricantes, int numFabricantes, int* numProdutos) {
+void cadastrarProduto(Produto* produto, Fabricante* fabricante, int numFabricantes, int* numProdutos) {
     printf("Cadastro de Produto\n");
     printf("Descricao: ");
     lerString(produto->descricao, sizeof(produto->descricao));
@@ -108,7 +112,7 @@ void cadastrarProduto(Produto* produto, Fabricante* fabricantes, int numFabrican
     printf("Fabricante (Digite o numero correspondente):\n");fflush(stdin);
     for (int i = 0; i < numFabricantes; i++) {
         fflush(stdin);
-        printf("%d - %s\n", i + 1, fabricantes[i].marca);
+        printf("%d - %s\n", i + 1, fabricante[i].marca);
         fflush(stdin);
     }
     
@@ -127,7 +131,7 @@ void cadastrarProduto(Produto* produto, Fabricante* fabricantes, int numFabrican
 }
 
 // Função para exibir relatório de produtos
-void exibirRelatorioProdutos(Produto* produtos, Fabricante* fabricantes, int numProdutos) {
+void exibirRelatorioProdutos(Produto* produtos, Fabricante* fabricante, int numProdutos) {
     printf("Relatorio de Produtos\n");
     for (int i = 0; i < numProdutos; i++) {
         printf("Produto %d:\a\n", i + 1);
@@ -137,11 +141,36 @@ void exibirRelatorioProdutos(Produto* produtos, Fabricante* fabricantes, int num
         printf("Valor de Venda: %.2f\a\n", produtos[i].valorVenda);
         printf("Valor do Lucro: %.2f\a\n", produtos[i].valorLucro);
         printf("Percentual do Lucro: %.2f%%\a\n", produtos[i].percentualLucro);
-        printf("Fabricante: %s\a\n", fabricantes[produtos[i].fabricanteIndex].marca);
+        printf("Fabricante: %s\a\n", fabricante[produtos[i].fabricanteIndex].marca);
         printf("\a\n");
 
     }
+
     
+}
+
+
+// Função para exibir relatório de produtos por Estado
+void exibirRelatorioProdutosporEstado(Produto* produtos, Fabricante* fabricante, int numProdutos) {
+    printf("Relatorio de Produtos por Estado\n");
+    for (int i = 0; i < numProdutos; i++) {
+        
+        printf("%d - %s \n", i+1, fabricante[i].uf);
+        
+        printf("\a\n");
+
+    }
+}
+
+void exibirRelatorioFabricantes(Fabricante* fabricante, int numFabricantes) {
+    printf("Relatorio de Produtos\n");
+    for (int i = 0; i < numFabricantes; i++) {
+        printf("Fabricante %d:\n", i + 1);
+        printf("Marca do fabricante: %s\n", fabricante[i].marca);
+        printf("Site do fabricante: %s\n", fabricante[i].site);
+        printf("Telefone do fabricante: %s\n", fabricante[i].telefone);
+        printf("UF do fabricante %s\n\n", fabricante[i].uf);
+    }
 }
 
 int main() {
@@ -156,6 +185,7 @@ int main() {
         printf("1 - Cadastrar Fabricante\n");
         printf("2 - Cadastrar Produto\n");
         printf("3 - Exibir Relatorio de Produtos\n");
+        printf("4 - Exibir Fabricantes\n");
         printf("0 - Sair\n");
         printf("Opcao: ");
         opcao = lerInt();
@@ -184,6 +214,16 @@ int main() {
                     printf("Nenhum produto cadastrado!\n");
                 }
                 break;
+            
+                case 4:
+                if (numFabricantes > 0) {
+                    exibirRelatorioFabricantes(fabricantes, numFabricantes);
+                } else {
+                    printf("Nenhum produto cadastrado!\n");
+                }
+                break;
+
+
             case 0:
                 printf("Saindo do programa...\n");
                 break;
