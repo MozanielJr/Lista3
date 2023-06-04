@@ -17,162 +17,182 @@
 // - Para cada envio de outros integrantes no AVA será descontado 1 ponto do grupo.
 // - Entrega 3 – 05/06
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
 
 #define MAX_FABRICANTES 5
-#define MAX_PRODUTOS 50
-#define MIN_FABRICANTES 2
-#define MIN_PRODUTOS 2
+#define MAX_PRODUTOS 51
+#define UF_SIZE 5
 
-struct Fabricante {
+// Estrutura do Fabricante
+typedef struct {
     char marca[50];
     char site[100];
-    char telefone[15];
-    char uf[3];
-};
+    char telefone[20];
+    char uf[UF_SIZE];
+} Fabricante;
 
-struct Produto {
+// Estrutura do Produto
+typedef struct {
     char descricao[100];
-    float peso;
-    float valorCompra;
-    float valorVenda;
-    float valorLucro;
-    float percentualLucro;
-    struct Fabricante fabricante;
-};
+    float peso, valorCompra, valorVenda, valorLucro, percentualLucro;
+    int fabricanteIndex;
+} Produto;
 
-void leValidaFabricante(struct Fabricante *fabricante) {
+// Função para ler e validar uma string
+void lerString(char* string, int tamanho) {
+    fgets(string, tamanho, stdin);
+    string[strcspn(string, "\n")] = '\0'; // Remove a quebra de linha
+}
+
+// Função para limpar o buffer do teclado
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
+// Função para ler e validar um número float
+float lerFloat() {
+    char buffer[20];
+    lerString(buffer, sizeof(buffer));
+    fflush(stdin);
+    return strtof(buffer, NULL);
+}
+
+// Função para ler e validar um número inteiro
+int lerInt() {
+    char buffer[20];
+    lerString(buffer, sizeof(buffer));
+    fflush(stdin);
+    return strtol(buffer, NULL, 20);
+}
+
+// Função para cadastrar um fabricante
+void cadastrarFabricante(Fabricante* fabricante, int* numFabricantes) {
+    printf("Cadastro de Fabricante\n");
     printf("Marca: ");
-    scanf(" %[^\n]", fabricante->marca);
-
+    lerString(fabricante->marca, sizeof(fabricante->marca));
     printf("Site: ");
-    scanf(" %[^\n]", fabricante->site);
-
+    lerString(fabricante->site, sizeof(fabricante->site));
     printf("Telefone: ");
-    scanf(" %[^\n]", fabricante->telefone);
-
+    lerString(fabricante->telefone, sizeof(fabricante->telefone));
     printf("UF: ");
-    scanf(" %[^\n]", fabricante->uf);
+    lerString(fabricante->uf, sizeof(fabricante->uf));
+    (*numFabricantes)++;
+    printf("Tecle enter para continuar...");
+    getchar();
+    
 }
 
-void leValidaProduto(struct Produto *produto) {
-    printf("Descrição: ");
-    scanf(" %[^\n]", produto->descricao);
-
+// Função para cadastrar um produto
+void cadastrarProduto(Produto* produto, Fabricante* fabricantes, int numFabricantes, int* numProdutos) {
+    printf("Cadastro de Produto\n");
+    printf("Descricao: ");
+    lerString(produto->descricao, sizeof(produto->descricao));
     printf("Peso: ");
-    scanf("%f", &produto->peso);
-
-    printf("Valor de compra: ");
-    scanf("%f", &produto->valorCompra);
-
-    printf("Valor de venda: ");
-    scanf("%f", &produto->valorVenda);
-
-    // Calcula o lucro e percentual de lucro automaticamente
+    produto->peso = lerFloat();
+    printf("Valor de Compra: ");
+    fflush(stdin);
+    produto->valorCompra = lerFloat();
+    printf("Valor de Venda: ");
+    fflush(stdin);
+    produto->valorVenda = lerFloat();
+    fflush(stdin);
     produto->valorLucro = produto->valorVenda - produto->valorCompra;
-    produto->percentualLucro = (produto->valorLucro / produto->valorCompra) * 100;
+    produto->percentualLucro = (produto->valorLucro / produto->valorCompra)*100;
+    
 
-    leValidaFabricante(&(produto->fabricante));
-}
-
-void cadastrarFabricantes(struct Fabricante fabricantes[], int *numFabricantes) {
-    for (int i = 0; i < *numFabricantes; i++) {
-        printf("Fabricante %d\n", i + 1);
-        leValidaFabricante(&(fabricantes[i]));
-    }
-}
-
-void cadastrarProdutos(struct Produto produtos[], int *numProdutos) {
-    for (int i = 0; i < *numProdutos; i++) {
-        printf("Produto %d\n", i + 1);
-        leValidaProduto(&(produtos[i]));
-    }
-}
-
-void exibirRelatorioProdutos(const struct Produto produtos[], int numProdutos) {
-    printf("RELATÓRIO DE PRODUTOS\n");
-    for (int i = 0; i < numProdutos; i++) {
-        const struct Produto *produto = &produtos[i];
-        printf("Produto %d\n", i + 1);
-        printf("Descrição: %s\n", produto->descricao);
-        printf("Peso: %.2f\n", produto->peso);
-        printf("Valor de compra: %.2f\n", produto->valorCompra);
-        printf("Valor de venda: %.2f\n", produto->valorVenda);
-        printf("Valor do lucro: %.2f\n", produto->valorLucro);
-        printf("Percentual do lucro: %.2f%%\n", produto->percentualLucro);
-        printf("Fabricante:\n");
-        printf("  Marca: %s\n", produto->fabricante.marca);
-        printf("  Site: %s\n", produto->fabricante.site);
-        printf("  Telefone: %s\n", produto->fabricante.telefone);
-        printf("  UF: %s\n\n", produto->fabricante.uf);
-    }
-}
-
-void exibirRelatorioFabricantes(const struct Fabricante fabricantes[], int numFabricantes) {
-    printf("RELATÓRIO DE FABRICANTES\n");
+    // Cadastrar fabricante
+    printf("Fabricante (Digite o numero correspondente):\n");fflush(stdin);
     for (int i = 0; i < numFabricantes; i++) {
-        const struct Fabricante *fabricante = &fabricantes[i];
-        printf("Fabricante %d\n", i + 1);
-        printf("Marca: %s\n", fabricante->marca);
-        printf("Site: %s\n", fabricante->site);
-        printf("Telefone: %s\n", fabricante->telefone);
-        printf("UF: %s\n\n", fabricante->uf);
+        fflush(stdin);
+        printf("%d - %s\n", i + 1, fabricantes[i].marca);
+        fflush(stdin);
     }
+    
+    int opcao;
+    do {
+        opcao = lerInt();
+        if (opcao > 0 && opcao <= numFabricantes) {
+            produto->fabricanteIndex = opcao - 1;
+        } else {
+            printf("Opcao invalida! Digite novamente: ");
+        }
+    } while (opcao <= 0 || opcao > numFabricantes);
+    (*numProdutos)++;
+    printf("Tecle enter para continuar...");
+    getchar();
+}
+
+// Função para exibir relatório de produtos
+void exibirRelatorioProdutos(Produto* produtos, Fabricante* fabricantes, int numProdutos) {
+    printf("Relatorio de Produtos\n");
+    for (int i = 0; i < numProdutos; i++) {
+        printf("Produto %d:\a\n", i + 1);
+        printf("Descricao: %s\a\n", produtos[i].descricao);
+        printf("Peso: %.2f\a\n", produtos[i].peso);
+        printf("Valor de Compra: %.2f\a\n", produtos[i].valorCompra);
+        printf("Valor de Venda: %.2f\a\n", produtos[i].valorVenda);
+        printf("Valor do Lucro: %.2f\a\n", produtos[i].valorLucro);
+        printf("Percentual do Lucro: %.2f%%\a\n", produtos[i].percentualLucro);
+        printf("Fabricante: %s\a\n", fabricantes[produtos[i].fabricanteIndex].marca);
+        printf("\a\n");
+
+    }
+    
 }
 
 int main() {
-    int numFabricantes, numProdutos;
-
-    do {
-        printf("Quantidade de fabricantes (entre %d e %d): ", MIN_FABRICANTES, MAX_FABRICANTES);
-        scanf("%d", &numFabricantes);
-        getchar(); // Limpa o buffer do teclado
-    } while (numFabricantes < MIN_FABRICANTES || numFabricantes > MAX_FABRICANTES);
-
-    struct Fabricante fabricantes[MAX_FABRICANTES];
-
-    do {
-        printf("Quantidade de produtos (entre %d e %d): ", MIN_PRODUTOS, MAX_PRODUTOS);
-        scanf("%d", &numProdutos);
-        getchar(); // Limpa o buffer do teclado
-    } while (numProdutos < MIN_PRODUTOS || numProdutos > MAX_PRODUTOS);
-
-    struct Produto produtos[MAX_PRODUTOS];
+    Fabricante fabricantes[MAX_FABRICANTES];
+    Produto produtos[MAX_PRODUTOS];
+    int numFabricantes = 0;
+    int numProdutos = 0;
 
     int opcao;
     do {
         printf("MENU\n");
-        printf("1. Cadastrar Fabricantes\n");
-        printf("2. Cadastrar Produtos\n");
-        printf("3. Exibir relatório de produtos\n");
-        printf("4. Exibir relatório de fabricantes\n");
-        printf("0. Sair\n");
-        printf("Opção: ");
-        scanf("%d", &opcao);
-        getchar(); // Limpa o buffer do teclado
+        printf("1 - Cadastrar Fabricante\n");
+        printf("2 - Cadastrar Produto\n");
+        printf("3 - Exibir Relatorio de Produtos\n");
+        printf("0 - Sair\n");
+        printf("Opcao: ");
+        opcao = lerInt();
 
         switch (opcao) {
             case 1:
-                cadastrarFabricantes(fabricantes, &numFabricantes);
+                if (numFabricantes <= MAX_FABRICANTES) {
+                    cadastrarFabricante(&fabricantes[numFabricantes], &numFabricantes);
+                    printf("Fabricante cadastrado com sucesso!\n");
+                } else {
+                    printf("Numero maximo de fabricantes atingido!\n");
+                }
                 break;
             case 2:
-                cadastrarProdutos(produtos, &numProdutos);
+                if (numProdutos <= MAX_PRODUTOS) {
+                    cadastrarProduto(&produtos[numProdutos], fabricantes, numFabricantes, &numProdutos);
+                    printf("Produto cadastrado com sucesso!\n");
+                } else {
+                    printf("Numero maximo de produtos atingido!\n");
+                }
                 break;
             case 3:
-                exibirRelatorioProdutos(produtos, numProdutos);
-                break;
-            case 4:
-                exibirRelatorioFabricantes(fabricantes, numFabricantes);
+                if (numProdutos > 0) {
+                    exibirRelatorioProdutos(produtos, fabricantes, numProdutos);
+                } else {
+                    printf("Nenhum produto cadastrado!\n");
+                }
                 break;
             case 0:
-                printf("Encerrando o programa...\n");
+                printf("Saindo do programa...\n");
                 break;
             default:
-                printf("Opção inválida!\n");
+                printf("Opcao invalida!\n");
                 break;
         }
 
-        printf("\n");
+        printf("\a\n");
     } while (opcao != 0);
 
     return 0;
